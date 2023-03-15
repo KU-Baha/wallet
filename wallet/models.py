@@ -6,6 +6,10 @@ class Account(models.Model):
     """ Моделька счета """
     name = models.CharField('Название счета', max_length=50, default="Счет")
     owner = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Владелец')
+    balance = models.IntegerField("Баланс", default=0)
+
+    def __str__(self):
+        return self.name
 
 
 class Tag(models.Model):
@@ -13,28 +17,40 @@ class Tag(models.Model):
     name = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-    is_transfer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
 
 
 class ChildCategory(models.Model):
     name = models.CharField(max_length=50)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
 
-class Transfer(models.Model):
-    from_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='from_transfers')
-    to_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='to_transfers')
+
+class Transaction(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name="Счет")
     date = models.DateField(auto_now_add=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    child_category = models.ForeignKey(ChildCategory, on_delete=models.CASCADE, null=True, blank=True)
+    child_category = models.ForeignKey(ChildCategory, on_delete=models.DO_NOTHING, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def __str__(self):
+        return f"{self.account.owner.username} - {self.account.name} - {self.child_category.name}"
+
 
 class Image(models.Model):
-    transfer = models.ForeignKey(Transfer, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/')
+
+    def __str__(self):
+        return self.transaction.account.name
