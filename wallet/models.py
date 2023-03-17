@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from config.settings import TRANSACTION_TYPES
+
 
 class Account(models.Model):
     """ Моделька счета """
@@ -10,6 +12,10 @@ class Account(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Счет'
+        verbose_name_plural = 'Счета'
 
 
 class Tag(models.Model):
@@ -23,14 +29,7 @@ class Tag(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class ChildCategory(models.Model):
-    name = models.CharField(max_length=50)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
 
     def __str__(self):
         return self.name
@@ -39,7 +38,7 @@ class ChildCategory(models.Model):
 class Transaction(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name="Счет")
     date = models.DateField(auto_now_add=True)
-    child_category = models.ForeignKey(ChildCategory, on_delete=models.DO_NOTHING, null=True, blank=True)
+    child_category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -54,4 +53,3 @@ class Image(models.Model):
 
     def __str__(self):
         return self.transaction.account.name
-
