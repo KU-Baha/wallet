@@ -38,13 +38,13 @@ class Category(models.Model):
 class Transaction(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name="Счет")
     date = models.DateField(auto_now_add=True)
-    child_category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.account.owner.username} - {self.account.name} - {self.child_category.name}"
+        return f"{self.account.owner.username} - {self.account.name} - {self.category.name}"
 
 
 class Image(models.Model):
