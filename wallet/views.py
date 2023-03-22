@@ -1,19 +1,36 @@
+import datetime
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
-from .forms import NameForm
+from .forms import AccountForm
+from .models import Account
 
 
-def get_name(request):
-    if request.method == 'POST':
-        form = NameForm(request.POST)
+def create_account(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
 
-        if form.is_valid():
-            return HttpResponseRedirect('/')
+            form = AccountForm(request.POST)
 
-    form = NameForm()
+            if form.is_valid():
+                name = form.save(commit=False)
+                name.owner = request.user
+                name.save()
 
-    return render(request, 'name.html', {'form': form})
+        form = AccountForm()
+
+        accounts = Account.objects.filter(owner=request.user)
+
+        context = {
+            'form': form,
+            'title': 'Создать новый счет',
+            'accounts': accounts
+            }
+
+        return render(request, 'wallet/name.html', context)
+
+    return HttpResponseRedirect('/admin/login/?next=/admin/')
 
 
 def index_page(request):

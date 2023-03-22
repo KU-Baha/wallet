@@ -1,5 +1,12 @@
 from django import forms
 
+from wallet.models import Category, Account
 
-class NameForm(forms.Form):
-    your_name = forms.CharField(label='Your name', max_length=100)
+
+class AccountForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ('name', 'balance', )
+        # exclude = ('owner', )
+
+
