@@ -17,6 +17,27 @@
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit">
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Счёт</th>
+                <th scope="col">Баланс</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+            <tr>
+                <th scope="row">{{ account.id }}</th>
+                <td>{{ account.name }}</td>
+                <td>{{ account.balance }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'index' %}" class="btn btn-primary">Back</a>
+    </div>
 </form>
 </body>
 </html>
