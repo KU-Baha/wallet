@@ -1,22 +1,23 @@
-import datetime
-
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import AccountForm
+from .forms import AccountForm, CategoryForm, TagForm, TransactionForm, ImageForm
 from .models import Account
 
 
-def create_account(request):
+def index_page(request):
+    return render(request, 'wallet/index.html')
+
+
+def account_view(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-
             form = AccountForm(request.POST)
 
             if form.is_valid():
-                name = form.save(commit=False)
-                name.owner = request.user
-                name.save()
+                account = form.save(commit=False)
+                account.owner = request.user
+                account.save()
 
         form = AccountForm()
 
@@ -26,19 +27,30 @@ def create_account(request):
             'form': form,
             'title': 'Создать новый счет',
             'accounts': accounts
-            }
+        }
 
-        return render(request, 'wallet/name.html', context)
+        return render(request, 'wallet/account_form.html', context)
 
-    return HttpResponseRedirect('/admin/login/?next=/admin/')
+    return HttpResponse('<h1>Войдите!</h1>')
 
 
-def index_page(request):
+def category_view(request):
     if request.user.is_authenticated:
-        return HttpResponse(f'<h1>Hello {request.user.username}</h1>')
+        if request.method == 'POST':
+            form = CategoryForm(request.POST)
 
-    return HttpResponse(f'<h1>Пожалуйста авторизуйтесь!</h1>')
+            if form.is_valid():
+                category = form.save(commit=False)
+                category.owner = request.user
+                category.save()
 
+        form = CategoryForm()
 
-def second_page(request):
-    return HttpResponse(f'<h1>Вторая страница!</h1>')
+        context = {
+            'form': form,
+            'title': 'Создать новую категорию',
+        }
+
+        return render(request, 'wallet/form.html', context)
+
+    return HttpResponse('<h1>Войдите!</h1>')
