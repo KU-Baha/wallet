@@ -1,15 +1,29 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import AccountForm, CategoryForm, TagForm, TransactionForm, ImageForm
 from .models import Account
 
 
 def index_page(request):
-    return render(request, 'wallet/index.html')
+    return render(request, 'wallet/index.html', {'datas': [1, 2, 3]})
 
 
 def account_view(request):
+    if request.user.is_authenticated:
+        accounts = Account.objects.filter(owner=request.user)
+
+        context = {
+            'accounts': accounts,
+            'title': 'Счета'
+        }
+
+        return render(request, 'wallet/accounts.html', context)
+
+    return HttpResponse('<h1>Войдите!</h1>')
+
+
+def account_create(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             form = AccountForm(request.POST)
@@ -18,6 +32,8 @@ def account_view(request):
                 account = form.save(commit=False)
                 account.owner = request.user
                 account.save()
+
+            return redirect('account')
 
         form = AccountForm()
 
@@ -29,9 +45,38 @@ def account_view(request):
             'accounts': accounts
         }
 
-        return render(request, 'wallet/account_form.html', context)
+        return render(request, 'wallet/form.html', context)
 
     return HttpResponse('<h1>Войдите!</h1>')
+
+
+def account_update(request, pk):
+    user = request.user
+    account = get_object_or_404(Account, pk=pk, owner=user)
+
+    if request.method == 'POST':
+        form = AccountForm(request.POST, instance=account)
+
+        if form.is_valid():
+            form.save()
+
+        return redirect('account')
+
+    form = AccountForm(instance=account)
+
+    context = {
+        'form': form,
+        'title': 'Редактировать счет',
+    }
+
+    return render(request, 'wallet/form.html', context)
+
+
+def account_delete(request, pk):
+    user = request.user
+    account = get_object_or_404(Account, pk=pk, owner=user)
+    account.delete()
+    return redirect('account')
 
 
 def category_view(request):
