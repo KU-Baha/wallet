@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import AccountForm, CategoryForm, TagForm, TransactionForm, ImageForm
@@ -6,7 +5,7 @@ from .models import Account
 
 
 def index_page(request):
-    return render(request, 'wallet/index.html', {'datas': [1, 2, 3]})
+    return render(request, 'wallet/index.html')
 
 
 def account_view(request):
@@ -20,7 +19,7 @@ def account_view(request):
 
         return render(request, 'wallet/accounts.html', context)
 
-    return HttpResponse('<h1>Войдите!</h1>')
+    return redirect('index')
 
 
 def account_create(request):
@@ -47,7 +46,7 @@ def account_create(request):
 
         return render(request, 'wallet/form.html', context)
 
-    return HttpResponse('<h1>Войдите!</h1>')
+    return redirect('index')
 
 
 def account_update(request, pk):
@@ -98,4 +97,4 @@ def category_view(request):
 
         return render(request, 'wallet/form.html', context)
 
-    return HttpResponse('<h1>Войдите!</h1>')
+    return redirect('index')

@@ -13,9 +13,15 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'account' %}">Account</a>
                 </li>
+                {% if not request.user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'account-create' %}">Account Create</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'login' %}">Login</a>
                 </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Logout</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
