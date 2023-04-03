@@ -29,7 +29,7 @@ class AccountListView(AccountView, ListView):
 
 class AccountCreateView(AccountView, CreateView):
     model = Account
-    fields = ['name', 'balance']
+    fields = ('name', 'balance')
     template_name = 'wallet/form.html'
     success_url = reverse_lazy('account')
 
