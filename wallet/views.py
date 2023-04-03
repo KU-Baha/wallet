@@ -1,4 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect, Http404
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import ListView, CreateView
 
 from .forms import AccountForm, CategoryForm, TagForm, TransactionForm, ImageForm
 from .models import Account
@@ -8,45 +12,30 @@ def index_page(request):
     return render(request, 'wallet/index.html')
 
 
-def account_view(request):
-    if request.user.is_authenticated:
-        accounts = Account.objects.filter(owner=request.user)
-
-        context = {
-            'accounts': accounts,
-            'title': 'Счета'
-        }
-
-        return render(request, 'wallet/accounts.html', context)
-
-    return redirect('index')
+class AccountView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
 
-def account_create(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            form = AccountForm(request.POST)
+class AccountListView(AccountView, ListView):
+    template_name = 'wallet/accounts.html'
+    context_object_name = 'accounts'
 
-            if form.is_valid():
-                account = form.save(commit=False)
-                account.owner = request.user
-                account.save()
+    def get_queryset(self):
+        return Account.objects.filter(owner=self.request.user)
 
-            return redirect('account')
 
-        form = AccountForm()
+class AccountCreateView(AccountView, CreateView):
+    model = Account
+    fields = ['name', 'balance']
+    template_name = 'wallet/form.html'
+    success_url = reverse_lazy('account')
 
-        accounts = Account.objects.filter(owner=request.user)
-
-        context = {
-            'form': form,
-            'title': 'Создать новый счет',
-            'accounts': accounts
-        }
-
-        return render(request, 'wallet/form.html', context)
-
-    return redirect('index')
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 def account_update(request, pk):
