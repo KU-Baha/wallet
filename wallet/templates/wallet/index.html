@@ -4,6 +4,7 @@
 
 {% block content %}
     <h1>Wallet</h1>
+
     {% if request.user.is_authenticated %}
         <h3>Добро пожаловать {{ request.user.username }}</h3>
     {% else %}

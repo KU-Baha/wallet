@@ -26,6 +26,10 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
@@ -33,6 +37,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
 class Transaction(models.Model):
@@ -46,6 +54,10 @@ class Transaction(models.Model):
     def __str__(self):
         return f"{self.account.owner.username} - {self.account.name} - {self.category.name}"
 
+    class Meta:
+        verbose_name = 'Транзакция'
+        verbose_name_plural = 'Транзакции'
+
 
 class Image(models.Model):
     transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
@@ -53,3 +65,7 @@ class Image(models.Model):
 
     def __str__(self):
         return self.transaction.account.name
+
+    class Meta:
+        verbose_name = 'Изображение'
+        verbose_name_plural = 'Изображения'

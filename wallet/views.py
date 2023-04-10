@@ -9,7 +9,7 @@ from .models import Account
 
 
 def index_page(request):
-    return render(request, 'wallet/index.html')
+    return render(request, 'wallet/index.html', {'data': 'data'})
 
 
 class AccountView(View):

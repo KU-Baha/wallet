@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custome_filter %}
 
 {% block title %} {% endblock %}
 
@@ -17,8 +18,8 @@
     {% for account in accounts %}
     <tr>
         <th scope="row">{{ account.id }}</th>
-        <td>{{ account.name }}</td>
-        <td>{{ account.balance }}</td>
+        <td>{{ account.name|cuter:"Мат" }}</td>
+        <td>{{ account.balance|to_som }}</td>
         <td>{{ account.owner }}</td>
         <td>
             <a href="{% url 'account-update' account.pk %}" class="btn btn-success">Update</a>
