@@ -1,6 +1,6 @@
 from django import forms
 
-from wallet.models import Category, Account, Transaction, Tag, Image
+from apps.wallet.models import Category, Account, Transaction, Tag, Image
 
 
 class AccountForm(forms.ModelForm):

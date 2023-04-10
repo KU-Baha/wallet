@@ -20,8 +20,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('users.urls')),
-    path('', include('wallet.urls')),
+    path('accounts/', include('apps.users.urls')),
+    path('', include('apps.wallet.urls')),
 ]
 
 if settings.DEBUG:

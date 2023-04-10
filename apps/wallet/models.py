@@ -6,7 +6,7 @@ from config.settings import TRANSACTION_TYPES
 
 class Account(models.Model):
     """ Моделька счета """
-    name = models.CharField('Название счета', max_length=50, default="Счет")
+    name = models.CharField('Название счета', max_length=50, default="Счет", db_index=True)
     owner = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Владелец')
     balance = models.IntegerField("Баланс", default=0)
 
